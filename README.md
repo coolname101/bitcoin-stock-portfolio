@@ -5,3 +5,5 @@ This project is intended to investigate whether a CFO can invest some funds in B
 Ensure all the required applications are installed from the requirements document.
 
 To run the web application locally, copy and paste the following command in your command line `streamlit run app.py --server.enableXsrfProtection false`
+
+([How to run the app and navigate](https://youtu.be/bSmvT1WQCDg))
