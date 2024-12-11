@@ -6,6 +6,8 @@ import talib as ta
 # import mplfinance as mpf
 from prophet import Prophet
 from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
+from statsmodels.tsa.statespace.sarimax import SARIMAX
+from sklearn.preprocessing import MinMaxScaler
 
 @st.cache_data
 def load_data(ticker):
@@ -67,6 +69,17 @@ def feature_engineering(dataframe):
     dataframe['engulfing'] = ta.CDLENGULFING(dataframe['Open'], dataframe['High'], dataframe['Low'], dataframe['Close'])
     
     return dataframe
+
+@st.cache_data
+def scale_features(dataframe):
+    
+    scale_cols = ['Open', 'High', 'Low', 'rsi', 'macd', 'macd_signal', 'macd_hist']
+    
+    scaler = MinMaxScaler()
+    dataframe[scale_cols] = scaler.fit_transform(dataframe[scale_cols])
+    
+    return dataframe
+    
 
 
 @st.cache_data
@@ -138,8 +151,20 @@ def split_train_val(dataframe, frac=0.99):
     
     return train_data, val_data
 
+@st.cache_data
+def split_sarima_data(dataframe, frac=0.75):
+    
+    split = int(len(dataframe) * frac)
+    
+    train = dataframe[:split]
+    test = dataframe[split:]
+    
+    return train, test
 
-# @st.cache_data
+
+
+
+@st.cache_data
 def training_prophet(dataframe):
     """
     Train dataframe using the Meta's Prophet model.
@@ -165,7 +190,7 @@ def training_prophet(dataframe):
     return model
 
 
-# @st.cache_data
+@st.cache_data
 def prophet_predict(train_set, val_set, _trained_model):
     """
     Predict same number of days into the future as the length of the val_set.
@@ -205,7 +230,7 @@ def prophet_predict(train_set, val_set, _trained_model):
 @st.cache_data
 def predict_col(dataframe, dataframe2, colname):
     """
-    Uses the date column called 'ds' to train a RandomForestRegressor predict 
+    Uses the date column called 'ds' to train a RandomForestRegressor and predict 
     future values of 'colname'.
     
     params dataframe: to be used as training data.
@@ -261,7 +286,7 @@ def predict_col_class(dataframe, dataframe2, colname):
     
     return future_df
 
-
+@st.cache_data
 def calculate_atr(data, window=5):
   """
   This function calculates the Average True Range (ATR) for a given DataFrame.
@@ -281,3 +306,25 @@ def calculate_atr(data, window=5):
   atr = true_range.rolling(window=window).mean()
   
   return atr.dropna()
+
+@st.cache_data
+def training_sarima(dataframe):
+    """
+    
+    """
+    
+    predictors = ['Open', 'High', 'Low', 'rsi', 'macd', 'macd_signal', 'macd_hist', 'engulfing']    
+    sarimax_model = SARIMAX(dataframe['Close'], exog=dataframe[predictors], seasonal_order=(1,1,1,52))
+    
+    return sarimax_model.fit()
+
+
+@st.cache_data
+def forecast_sarima(dataframe, trained_sarima):
+    """
+    
+    """
+    
+    predictors = ['Open', 'High', 'Low', 'rsi', 'macd', 'macd_signal', 'macd_hist', 'engulfing']
+     
+    return trained_sarima.forecast(steps=(len(dataframe)), exog=dataframe[predictors])

@@ -5,3 +5,5 @@ This project is intended to investigate whether a CFO can invest some funds in B
 Ensure all the required applications are installed from the requirements document.
 
 To run the web application locally, copy and paste the following command in your command line `streamlit run app.py --server.enableXsrfProtection false`
+
+[![HOW TO RUN THE APP](http://img.youtube.com/vi/bSmvT1WQCDg/0.jpg)](http://www.youtube.com/watch?v=bSmvT1WQCDg "Bitcoin Portfolio App")
