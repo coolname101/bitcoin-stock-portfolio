@@ -6,4 +6,4 @@ Ensure all the required applications are installed from the requirements documen
 
 To run the web application locally, copy and paste the following command in your command line `streamlit run app.py --server.enableXsrfProtection false`
 
-([How to run the app and navigate](https://youtu.be/bSmvT1WQCDg))
+[![HOW TO RUN THE APP](http://img.youtube.com/vi/bSmvT1WQCDg/0.jpg)](http://www.youtube.com/watch?v=bSmvT1WQCDg "Bitcoin Portfolio App")
